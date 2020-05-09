@@ -49,7 +49,7 @@ func (s Service) Get(ctx context.Context) ([]Toy, error) {
 	return toys, nil
 }
 
-// Put add a toy to the cache.
+// Put adds a toy to the cache.
 func (s Service) Put(ctx context.Context, t Toy) error {
 	switch {
 	case t.Name == "":

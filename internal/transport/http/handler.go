@@ -60,7 +60,7 @@ func (h Handler) PutToy(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-// DeleteToy deleted the oldest cached toy.
+// DeleteToy deletes the oldest cached toy.
 func (h Handler) DeleteToy(w http.ResponseWriter, r *http.Request) {
 	h.Manager.Delete(r.Context())
 }

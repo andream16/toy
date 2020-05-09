@@ -19,7 +19,7 @@ func (im *InMemory) Get(ctx context.Context) []Toy {
 	return im.Toys
 }
 
-// Put add a toy to the cache.
+// Put adds a toy to the cache.
 func (im *InMemory) Put(ctx context.Context, t Toy) {
 	im.Toys = append(im.Toys, t)
 }
