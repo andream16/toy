@@ -29,7 +29,7 @@ type Toy struct {
 // GetToys returns a list of cached toys if they are an even number.
 // If an odd number of toys is cached, an error will be returned.
 func (h Handler) GetToys(w http.ResponseWriter, r *http.Request) {
-	toys, err := h.Manager.Get()
+	toys, err := h.Manager.Get(r.Context())
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		_ = json.NewEncoder(w).Encode(APIError{
@@ -50,7 +50,7 @@ func (h Handler) PutToy(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	if err := h.Manager.Put(toDomainToy(t)); err != nil {
+	if err := h.Manager.Put(r.Context(), toDomainToy(t)); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		_ = json.NewEncoder(w).Encode(APIError{
 			Message: err.Error(),
@@ -62,7 +62,7 @@ func (h Handler) PutToy(w http.ResponseWriter, r *http.Request) {
 
 // DeleteToy deleted the oldest cached toy.
 func (h Handler) DeleteToy(w http.ResponseWriter, r *http.Request) {
-	h.Manager.Delete()
+	h.Manager.Delete(r.Context())
 }
 
 func toHandlerToys(toys []toy.Toy) []Toy {

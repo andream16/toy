@@ -1,0 +1,10 @@
+version: '3.4'
+services:
+  toy:
+    build:
+      context: .
+      target: build
+    volumes:
+      - .:/go/src/github.com/andream16/toy
+    ports:
+      - 8080:8080

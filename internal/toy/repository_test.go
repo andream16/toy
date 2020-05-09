@@ -1,6 +1,7 @@
 package toy_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/andream16/toy/internal/toy"
@@ -20,6 +21,7 @@ func TestInMemory_Get(t *testing.T) {
 			description = "pretty cool"
 		)
 
+		ctx := context.Background()
 		repo := &toy.InMemory{
 			Toys: []toy.Toy{
 				{
@@ -28,7 +30,7 @@ func TestInMemory_Get(t *testing.T) {
 				},
 			},
 		}
-		toys := repo.Get()
+		toys := repo.Get(ctx)
 		if len(toys) != 1 {
 			t.Fatalf("expected 1 toy, got %d", len(toys))
 		}
@@ -43,6 +45,7 @@ func TestInMemory_Get(t *testing.T) {
 
 func TestInMemory_Put(t *testing.T) {
 	t.Run("it should add another toy for a total of two toys", func(t *testing.T) {
+		ctx := context.Background()
 		repo := &toy.InMemory{
 			Toys: []toy.Toy{
 				{
@@ -51,11 +54,11 @@ func TestInMemory_Put(t *testing.T) {
 				},
 			},
 		}
-		repo.Put(toy.Toy{
+		repo.Put(ctx, toy.Toy{
 			Name:        "spiderman action figure",
 			Description: "meh",
 		})
-		toys := repo.Get()
+		toys := repo.Get(ctx)
 		if len(toys) != 2 {
 			t.Fatalf("expected 2 toys, got %d", len(toys))
 		}
@@ -69,6 +72,7 @@ func TestInMemory_Delete(t *testing.T) {
 			remainingToyDescription = "pretty cool"
 		)
 
+		ctx := context.Background()
 		repo := &toy.InMemory{}
 
 		for _, t := range []toy.Toy{
@@ -81,11 +85,11 @@ func TestInMemory_Delete(t *testing.T) {
 				Description: remainingToyDescription,
 			},
 		} {
-			repo.Put(t)
+			repo.Put(ctx, t)
 		}
 
-		repo.Delete()
-		toys := repo.Get()
+		repo.Delete(ctx)
+		toys := repo.Get(ctx)
 		if len(toys) != 1 {
 			t.Fatalf("expected 1 toys, got %d", len(toys))
 		}
@@ -101,9 +105,10 @@ func TestInMemory_Delete(t *testing.T) {
 			remainingToyName        = "batman action figure"
 			remainingToyDescription = "pretty cool"
 		)
+		ctx := context.Background()
 		repo := &toy.InMemory{}
-		repo.Delete()
-		toys := repo.Get()
+		repo.Delete(ctx)
+		toys := repo.Get(ctx)
 		if len(toys) != 0 {
 			t.Fatalf("expected 0 toys, got %d", len(toys))
 		}

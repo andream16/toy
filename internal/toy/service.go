@@ -1,12 +1,15 @@
 package toy
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 // Manager describes the business logic.
 type Manager interface {
-	Get() ([]Toy, error)
-	Put(t Toy) error
-	Delete()
+	Get(ctx context.Context) ([]Toy, error)
+	Put(ctx context.Context, t Toy) error
+	Delete(ctx context.Context)
 }
 
 // Service implements the business logic.
@@ -38,8 +41,8 @@ func NewService(repo Repository) Service {
 }
 
 // Get returns cached toys if their quantity is even. OddNumberOfToysError is returned if there's an odd number of them.
-func (s Service) Get() ([]Toy, error) {
-	toys := s.Repository.Get()
+func (s Service) Get(ctx context.Context) ([]Toy, error) {
+	toys := s.Repository.Get(ctx)
 	if len(toys)%2 != 0 {
 		return nil, OddNumberOfToysError{Number: len(toys)}
 	}
@@ -47,18 +50,18 @@ func (s Service) Get() ([]Toy, error) {
 }
 
 // Put add a toy to the cache.
-func (s Service) Put(t Toy) error {
+func (s Service) Put(ctx context.Context, t Toy) error {
 	switch {
 	case t.Name == "":
 		return InvalidToyError{Attribute: "name"}
 	case t.Description == "":
 		return InvalidToyError{Attribute: "description"}
 	}
-	s.Repository.Put(t)
+	s.Repository.Put(ctx, t)
 	return nil
 }
 
 // Delete deletes the oldest cached toy.
-func (s Service) Delete() {
-	s.Repository.Delete()
+func (s Service) Delete(ctx context.Context) {
+	s.Repository.Delete(ctx)
 }

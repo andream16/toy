@@ -2,6 +2,7 @@ package transporthttp_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -14,34 +15,40 @@ import (
 
 type mockOddToysManager struct{}
 
-func (m mockOddToysManager) Get() ([]toy.Toy, error) { return nil, toy.OddNumberOfToysError{Number: 3} }
-func (m mockOddToysManager) Put(t toy.Toy) error     { return nil }
-func (m mockOddToysManager) Delete()                 {}
+func (m mockOddToysManager) Get(ctx context.Context) ([]toy.Toy, error) {
+	return nil, toy.OddNumberOfToysError{Number: 3}
+}
+func (m mockOddToysManager) Put(ctx context.Context, t toy.Toy) error { return nil }
+func (m mockOddToysManager) Delete(ctx context.Context)               {}
 
 type mockEmptyToysManager struct{}
 
-func (m mockEmptyToysManager) Get() ([]toy.Toy, error) { return make([]toy.Toy, 0), nil }
-func (m mockEmptyToysManager) Put(t toy.Toy) error     { return nil }
-func (m mockEmptyToysManager) Delete()                 {}
+func (m mockEmptyToysManager) Get(ctx context.Context) ([]toy.Toy, error) {
+	return make([]toy.Toy, 0), nil
+}
+func (m mockEmptyToysManager) Put(ctx context.Context, t toy.Toy) error { return nil }
+func (m mockEmptyToysManager) Delete(ctx context.Context)               {}
 
 type mockFullToysManager struct{}
 
-func (m mockFullToysManager) Get() ([]toy.Toy, error) {
+func (m mockFullToysManager) Get(ctx context.Context) ([]toy.Toy, error) {
 	return []toy.Toy{
 		{Name: "hulk action figure", Description: "very nice"},
 		{Name: "superman action figure", Description: "very cool"},
 	}, nil
 }
-func (m mockFullToysManager) Put(t toy.Toy) error { return nil }
-func (m mockFullToysManager) Delete()             {}
+func (m mockFullToysManager) Put(ctx context.Context, t toy.Toy) error { return nil }
+func (m mockFullToysManager) Delete(ctx context.Context)               {}
 
 type mockInvalidAttributeManager struct{}
 
-func (m mockInvalidAttributeManager) Get() ([]toy.Toy, error) { return make([]toy.Toy, 0), nil }
-func (m mockInvalidAttributeManager) Put(t toy.Toy) error {
+func (m mockInvalidAttributeManager) Get(ctx context.Context) ([]toy.Toy, error) {
+	return make([]toy.Toy, 0), nil
+}
+func (m mockInvalidAttributeManager) Put(ctx context.Context, t toy.Toy) error {
 	return toy.InvalidToyError{Attribute: "name"}
 }
-func (m mockInvalidAttributeManager) Delete() {}
+func (m mockInvalidAttributeManager) Delete(ctx context.Context) {}
 
 func TestHandler_GetToys(t *testing.T) {
 	t.Run("it should return an APIError because the number of toys is odd", func(t *testing.T) {

@@ -1,6 +1,7 @@
 package toy_test
 
 import (
+	"context"
 	"errors"
 	"testing"
 
@@ -15,13 +16,13 @@ func TestService(t *testing.T) {
 
 type mockRepoNoToys struct{}
 
-func (m mockRepoNoToys) Get() []toy.Toy { return make([]toy.Toy, 0) }
-func (m mockRepoNoToys) Put(t toy.Toy)  {}
-func (m mockRepoNoToys) Delete()        {}
+func (m mockRepoNoToys) Get(ctx context.Context) []toy.Toy  { return make([]toy.Toy, 0) }
+func (m mockRepoNoToys) Put(ctx context.Context, t toy.Toy) {}
+func (m mockRepoNoToys) Delete(ctx context.Context)         {}
 
 type mockRepoEvenToys struct{}
 
-func (m mockRepoEvenToys) Get() []toy.Toy {
+func (m mockRepoEvenToys) Get(ctx context.Context) []toy.Toy {
 	return []toy.Toy{
 		{
 			Name:        "gopher plushie",
@@ -33,12 +34,12 @@ func (m mockRepoEvenToys) Get() []toy.Toy {
 		},
 	}
 }
-func (m mockRepoEvenToys) Put(t toy.Toy) {}
-func (m mockRepoEvenToys) Delete()       {}
+func (m mockRepoEvenToys) Put(ctx context.Context, t toy.Toy) {}
+func (m mockRepoEvenToys) Delete(ctx context.Context)         {}
 
 type mockRepoOddToys struct{}
 
-func (m mockRepoOddToys) Get() []toy.Toy {
+func (m mockRepoOddToys) Get(ctx context.Context) []toy.Toy {
 	return []toy.Toy{
 		{
 			Name:        "gopher plushie",
@@ -46,13 +47,13 @@ func (m mockRepoOddToys) Get() []toy.Toy {
 		},
 	}
 }
-func (m mockRepoOddToys) Put(t toy.Toy) {}
-func (m mockRepoOddToys) Delete()       {}
+func (m mockRepoOddToys) Put(ctx context.Context, t toy.Toy) {}
+func (m mockRepoOddToys) Delete(ctx context.Context)         {}
 
 func TestService_Get(t *testing.T) {
 	t.Run("it should return an empty list because no toys exist", func(t *testing.T) {
 		svc := toy.NewService(mockRepoNoToys{})
-		toys, err := svc.Get()
+		toys, err := svc.Get(context.Background())
 		if err != nil {
 			t.Fatalf("expected no error but got: %s", err)
 		}
@@ -62,7 +63,7 @@ func TestService_Get(t *testing.T) {
 	})
 	t.Run("it should return 2 toys", func(t *testing.T) {
 		svc := toy.NewService(mockRepoEvenToys{})
-		toys, err := svc.Get()
+		toys, err := svc.Get(context.Background())
 		if err != nil {
 			t.Fatalf("expected no error but got: %s", err)
 		}
@@ -72,7 +73,7 @@ func TestService_Get(t *testing.T) {
 	})
 	t.Run("it should return OddNumberOfToysError", func(t *testing.T) {
 		svc := toy.NewService(mockRepoOddToys{})
-		toys, err := svc.Get()
+		toys, err := svc.Get(context.Background())
 		if err == nil {
 			t.Fatal("expected OddNumberOfToysError, got nil")
 		}
@@ -89,7 +90,7 @@ func TestService_Get(t *testing.T) {
 func TestService_Put(t *testing.T) {
 	t.Run("it should return an error because the toy name is not valid", func(t *testing.T) {
 		svc := toy.NewService(nil)
-		err := svc.Put(toy.Toy{})
+		err := svc.Put(context.Background(), toy.Toy{})
 		if err == nil {
 			t.Fatalf("expected InvalidToyError, got nil")
 		}
@@ -103,7 +104,7 @@ func TestService_Put(t *testing.T) {
 	})
 	t.Run("it should return an error because the toy description is not valid", func(t *testing.T) {
 		svc := toy.NewService(nil)
-		err := svc.Put(toy.Toy{Name: "john wick action figure"})
+		err := svc.Put(context.Background(), toy.Toy{Name: "john wick action figure"})
 		if err == nil {
 			t.Fatalf("expected InvalidToyError, got nil")
 		}
@@ -117,7 +118,7 @@ func TestService_Put(t *testing.T) {
 	})
 	t.Run("it should add a new toy to the collection", func(t *testing.T) {
 		svc := toy.NewService(mockRepoNoToys{})
-		err := svc.Put(toy.Toy{Name: "john wick action figure", Description: "neat"})
+		err := svc.Put(context.Background(), toy.Toy{Name: "john wick action figure", Description: "neat"})
 		if err != nil {
 			t.Fatalf("expected error %s", err.Error())
 		}
@@ -126,6 +127,6 @@ func TestService_Put(t *testing.T) {
 
 func TestService_Delete(t *testing.T) {
 	t.Run("it should call repository's delete", func(t *testing.T) {
-		toy.NewService(&toy.InMemory{}).Delete()
+		toy.NewService(&toy.InMemory{}).Delete(context.Background())
 	})
 }
