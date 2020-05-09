@@ -7,35 +7,47 @@ import (
 	"github.com/andream16/toy/internal/toy"
 )
 
-type mockRepoNoToys struct {}
-func (m mockRepoNoToys) Get() []toy.Toy {return make([]toy.Toy, 0)}
-func (m mockRepoNoToys) Put(t toy.Toy) {}
+func TestService(t *testing.T) {
+	t.Run("should implement Manager", func(t *testing.T) {
+		var _ toy.Manager = toy.Service{}
+	})
+}
 
-type mockRepoEvenToys struct {}
+type mockRepoNoToys struct{}
+
+func (m mockRepoNoToys) Get() []toy.Toy { return make([]toy.Toy, 0) }
+func (m mockRepoNoToys) Put(t toy.Toy)  {}
+func (m mockRepoNoToys) Delete()        {}
+
+type mockRepoEvenToys struct{}
+
 func (m mockRepoEvenToys) Get() []toy.Toy {
 	return []toy.Toy{
 		{
-			Name: "gopher plushie",
+			Name:        "gopher plushie",
 			Description: "amazing golang gopher plushie",
 		},
 		{
-			Name: "docker plushie",
+			Name:        "docker plushie",
 			Description: "amazing docker gopher plushie",
 		},
 	}
 }
 func (m mockRepoEvenToys) Put(t toy.Toy) {}
+func (m mockRepoEvenToys) Delete()       {}
 
-type mockRepoOddToys struct {}
+type mockRepoOddToys struct{}
+
 func (m mockRepoOddToys) Get() []toy.Toy {
 	return []toy.Toy{
 		{
-			Name: "gopher plushie",
+			Name:        "gopher plushie",
 			Description: "amazing golang gopher plushie",
 		},
 	}
 }
 func (m mockRepoOddToys) Put(t toy.Toy) {}
+func (m mockRepoOddToys) Delete()       {}
 
 func TestService_Get(t *testing.T) {
 	t.Run("it should return an empty list because no toys exist", func(t *testing.T) {
@@ -109,5 +121,11 @@ func TestService_Put(t *testing.T) {
 		if err != nil {
 			t.Fatalf("expected error %s", err.Error())
 		}
+	})
+}
+
+func TestService_Delete(t *testing.T) {
+	t.Run("it should call repository's delete", func(t *testing.T) {
+		toy.NewService(&toy.InMemory{}).Delete()
 	})
 }
