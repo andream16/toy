@@ -58,16 +58,16 @@ func TestHandler_GetToys(t *testing.T) {
 			"/",
 			nil,
 		)
-		rr := httptest.NewRecorder()
-		handler.GetToys(rr, req)
+		w := httptest.NewRecorder()
+		handler.GetToys(w, req)
 
-		if rr.Code != http.StatusBadRequest {
-			t.Fatalf("expected status %d, got %d", http.StatusBadRequest, rr.Code)
+		if w.Code != http.StatusBadRequest {
+			t.Fatalf("expected status %d, got %d", http.StatusBadRequest, w.Code)
 		}
 
 		var apiErr transporthttp.APIError
 
-		if err := json.NewDecoder(rr.Body).Decode(&apiErr); err != nil {
+		if err := json.NewDecoder(w.Body).Decode(&apiErr); err != nil {
 			t.Fatal(err)
 		}
 
@@ -82,16 +82,16 @@ func TestHandler_GetToys(t *testing.T) {
 			"/",
 			nil,
 		)
-		rr := httptest.NewRecorder()
-		handler.GetToys(rr, req)
+		w := httptest.NewRecorder()
+		handler.GetToys(w, req)
 
-		if rr.Code != http.StatusOK {
-			t.Fatalf("expected status %d, got %d", http.StatusOK, rr.Code)
+		if w.Code != http.StatusOK {
+			t.Fatalf("expected status %d, got %d", http.StatusOK, w.Code)
 		}
 
 		var toys []transporthttp.Toy
 
-		if err := json.NewDecoder(rr.Body).Decode(&toys); err != nil {
+		if err := json.NewDecoder(w.Body).Decode(&toys); err != nil {
 			t.Fatal(err)
 		}
 
@@ -106,16 +106,16 @@ func TestHandler_GetToys(t *testing.T) {
 			"/",
 			nil,
 		)
-		rr := httptest.NewRecorder()
-		handler.GetToys(rr, req)
+		w := httptest.NewRecorder()
+		handler.GetToys(w, req)
 
-		if rr.Code != http.StatusOK {
-			t.Fatalf("expected status %d, got %d", http.StatusOK, rr.Code)
+		if w.Code != http.StatusOK {
+			t.Fatalf("expected status %d, got %d", http.StatusOK, w.Code)
 		}
 
 		var toys []transporthttp.Toy
 
-		if err := json.NewDecoder(rr.Body).Decode(&toys); err != nil {
+		if err := json.NewDecoder(w.Body).Decode(&toys); err != nil {
 			t.Fatal(err)
 		}
 
