@@ -20,7 +20,7 @@ It's separation of concerns, allows to potentially plug-in other transports impl
 
 ## What you need to run the project
 
-- go: ~v1.14
+- go: ~v1.25
 - docker: ~v18.09.9
 - docker-compose: ~v1.23.2
 
