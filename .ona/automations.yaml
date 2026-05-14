@@ -1,0 +1,31 @@
+tasks:
+  vendor:
+    name: Install dependencies
+    description: Download Go module vendors.
+    command: |
+      go mod vendor
+    triggeredBy:
+      - postDevcontainerStart
+
+  test:
+    name: Run tests
+    description: Format and test Go code.
+    command: |
+      go fmt ./...
+      go test -vet all ./... -count=1 -race
+    triggeredBy:
+      - postDevcontainerStart
+    dependsOn:
+      - vendor
+
+services:
+  app:
+    name: Application
+    description: Run the app via docker-compose on port 8080.
+    commands:
+      start: |
+        docker compose up --build
+      ready: |
+        curl -sf http://localhost:8080
+      stop: |
+        docker compose down --rmi local
