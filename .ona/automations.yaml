@@ -1,0 +1,32 @@
+tasks:
+  install-deps:
+    name: Install dependencies
+    description: Download Go modules into the container cache.
+    triggeredBy:
+      - prebuild
+      - postDevcontainerStart
+    command: go mod download
+
+  test:
+    name: Run tests
+    description: Run the repository test suite.
+    triggeredBy:
+      - manual
+    dependsOn:
+      - install-deps
+    command: make test
+
+services:
+  toy-api:
+    name: Toy API
+    description: Build and run the API with Docker Compose after syncing vendored modules.
+    triggeredBy:
+      - manual
+    commands:
+      start: |
+        go mod vendor
+        docker compose up --build
+      ready: curl -sf http://127.0.0.1:8080/
+      stop: |
+        docker compose down --rmi local
+        rm -rf vendor
