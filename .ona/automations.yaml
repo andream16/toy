@@ -1,0 +1,20 @@
+tasks:
+  installDeps:
+    name: Install Go dependencies
+    description: Warm the Go module cache for local builds and tests.
+    command: |
+      go mod download
+    triggeredBy:
+      - postDevcontainerStart
+
+services:
+  toyApi:
+    name: Toy API
+    description: Runs the toy HTTP API on port 8080.
+    commands:
+      start: |
+        go run ./cmd/toy
+      ready: |
+        curl -fsS http://127.0.0.1:8080/ >/dev/null
+    triggeredBy:
+      - manual
