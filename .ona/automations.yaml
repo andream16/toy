@@ -1,0 +1,31 @@
+tasks:
+  install-deps:
+    name: Install dependencies
+    description: Warm the Go module cache used by local tooling and tests.
+    triggeredBy:
+      - prebuild
+      - postDevcontainerStart
+    command: go mod download
+
+  test:
+    name: Run tests
+    description: Run the repository formatting and test suite.
+    triggeredBy:
+      - manual
+    dependsOn:
+      - install-deps
+    command: make test
+
+services:
+  toy-api:
+    name: Toy API
+    description: Build and run the API through Docker Compose on port 8080.
+    triggeredBy:
+      - manual
+    commands:
+      start: |
+        go mod vendor
+        docker compose up --build
+      ready: curl -sf http://127.0.0.1:8080/
+      stop: |
+        docker compose down
