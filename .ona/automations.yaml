@@ -1,0 +1,40 @@
+tasks:
+  vendor:
+    name: Vendor Go dependencies
+    description: Populate vendor/ for Docker-based workflows.
+    command: |
+      go mod vendor
+    triggeredBy:
+      - postDevcontainerStart
+
+  test:
+    name: Run tests
+    description: Format the code and execute the Go test suite.
+    command: |
+      make test
+    dependsOn:
+      - vendor
+    triggeredBy:
+      - manual
+
+  build-image:
+    name: Build Docker image
+    description: Validate the production image build from the repository Dockerfile.
+    command: |
+      docker build .
+    dependsOn:
+      - vendor
+    triggeredBy:
+      - manual
+
+services:
+  api:
+    name: Toy API
+    description: Run the HTTP API locally on port 8080.
+    commands:
+      start: |
+        go run ./cmd/toy
+      ready: |
+        curl -fsS http://127.0.0.1:8080/ >/dev/null
+    triggeredBy:
+      - manual
