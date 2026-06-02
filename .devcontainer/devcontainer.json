@@ -7,14 +7,11 @@
   "features": {
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
   },
+  "postCreateCommand": "go mod download",
+  "forwardPorts": [8080],
   "customizations": {
     "vscode": {
-      "extensions": [
-        "golang.go"
-      ]
+      "extensions": ["golang.go"]
     }
-  },
-  "forwardPorts": [
-    8080
-  ]
+  }
 }

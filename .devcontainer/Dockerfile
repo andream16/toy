@@ -1,3 +1,6 @@
-FROM mcr.microsoft.com/devcontainers/go:1.23-bookworm
+FROM mcr.microsoft.com/devcontainers/go:1.24-bookworm
 
-RUN rm -f /etc/apt/sources.list.d/yarn.list
+RUN apt-get update \
+    && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get install -y --no-install-recommends ca-certificates curl make \
+    && rm -rf /var/lib/apt/lists/*
