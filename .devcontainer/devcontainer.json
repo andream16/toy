@@ -1,16 +1,20 @@
 {
-  "name": "toy",
-  "image": "mcr.microsoft.com/devcontainers/go",
+  "name": "Toy",
+  "build": {
+    "context": ".",
+    "dockerfile": "Dockerfile"
+  },
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker": {
-      "moby": false
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go"
+      ]
     }
   },
-  "forwardPorts": [8080],
-  "portsAttributes": {
-    "8080": {
-      "label": "Application",
-      "onAutoForward": "notify"
-    }
-  }
+  "forwardPorts": [
+    8080
+  ]
 }

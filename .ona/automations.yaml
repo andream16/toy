@@ -1,31 +1,37 @@
 tasks:
   vendor:
-    name: Install dependencies
-    description: Download Go module vendors.
+    name: Vendor Go dependencies
     command: |
       go mod vendor
     triggeredBy:
-      - postDevcontainerStart
+      - manual
 
   test:
     name: Run tests
-    description: Format and run all Go tests.
     command: |
-      go fmt ./...
-      go test -vet all ./... -count=1 -race
+      make test
     triggeredBy:
       - manual
-    dependsOn:
-      - vendor
+
+  build:
+    name: Build Docker image
+    command: |
+      go mod vendor
+      docker build .
+    triggeredBy:
+      - manual
 
 services:
-  dev-server:
-    name: Dev Server
-    description: Run the application via docker-compose on port 8080.
+  toy:
+    name: Toy API
+    description: Runs the Toy HTTP API on port 8080.
     commands:
       start: |
+        go mod vendor
         docker compose up --build
       ready: |
-        curl -sf http://localhost:8080
+        curl --fail --silent http://localhost:8080/ >/dev/null
       stop: |
-        docker compose down --rmi local
+        docker compose down --remove-orphans
+    triggeredBy:
+      - manual
